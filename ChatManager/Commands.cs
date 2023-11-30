@@ -10,6 +10,7 @@ using CounterStrikeSharp.API.Modules.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using static ChatManager.MuteManager;
+using static ChatManager.ConfigLoader;
 
 namespace ChatManager;
 
@@ -80,6 +81,18 @@ public abstract class Commands : BasePlugin
             player.PrintToChat($"{ChatColors.Purple}[ChatManager] {ChatColors.Darkred}{ChatManager.Config?["Localization"]?["Mute"]?["SilencedForSeconds"]}");
         }
 
+    }
+
+    [CommandHelper(whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]
+    [RequiresPermissions("@css/config")]
+    public static void ReloadCommand(CCSPlayerController? player, CommandInfo info)
+    {
+        
+        ChatManager.Config = ConfigLoader.LoadConfig(ChatManager._moduleDirectory + "/config.json");
+        if (player != null || player.IsValid || !player.IsBot)
+            player.PrintToChat($"\u200e{ChatColors.Purple}[ChatManager] {ChatColors.Green}Config Reloaded!");
+        Server.PrintToConsole($"{ChatColors.Purple}[ChatManager] Config Reloaded!");
+        
     }
     
     [CommandHelper(minArgs: 1, usage: "[SteamID64 or name]", whoCanExecute: CommandUsage.CLIENT_AND_SERVER)]

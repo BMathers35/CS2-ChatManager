@@ -27,8 +27,6 @@ public sealed class ChatManager : BasePlugin
     public override string ModuleVersion => "1.0.0";
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
     public static JObject? Config { get; set; }
-    private static string? _MuteCommand;
-    private static string? _UnmuteCommand;
     public static string? _moduleDirectory;
 
     public override void Load(bool hotReload)
@@ -51,8 +49,9 @@ public sealed class ChatManager : BasePlugin
         
         MutedPlayers = MuteManagerLoader(ModuleDirectory);
         Config = LoadConfig(ModuleDirectory + "/config.json");
-        _MuteCommand = (string?)(ChatManager.Config?["MuteCommands"]?["MuteCommand"] ?? "mute");
-        _UnmuteCommand = (string?)(ChatManager.Config?["MuteCommands"]?["UnmuteCommand"] ?? "unmute");
+        string? muteCommand = (string?)(ChatManager.Config?["MuteCommands"]?["MuteCommand"] ?? "mute");
+        string? unmuteCommand = (string?)(ChatManager.Config?["MuteCommands"]?["UnmuteCommand"] ?? "unmute");
+        string? reloadCommand = (string?)(ChatManager.Config?["MuteCommands"]?["ReloadCommand"] ?? "cm_reload");
         _moduleDirectory = ModuleDirectory;
         
         RegisterListener<Listeners.OnClientAuthorized>(OnClientAuthorized);
@@ -60,8 +59,9 @@ public sealed class ChatManager : BasePlugin
         AddCommandListener("say", OnPlayerChat);
         AddCommandListener("say_team", OnPlayerChatTeam);
         
-        AddCommand($"{_MuteCommand}", "Mute a player.", MuteCommand);
-        AddCommand($"{_UnmuteCommand}", "Unmute a player.", UnmuteCommand);
+        AddCommand($"css_{muteCommand}", "Mute a player.", MuteCommand);
+        AddCommand($"css_{unmuteCommand}", "Unmute a player.", UnmuteCommand);
+        AddCommand($"css_{reloadCommand}", "Reload configuration.", ReloadCommand);
         var timer = new Timer(30000);
         timer.Elapsed += (sender, e) => CheckMutedPlayers();
         timer.Start();

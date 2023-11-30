@@ -96,7 +96,8 @@ public static class ConfigLoader
                 {
                     
                     ["MuteCommand"] = "mute",
-                    ["UnmuteCommand"] = "unmute"
+                    ["UnmuteCommand"] = "unmute",
+                    ["ReloadCommand"] = "cm_reload"
                     
                 },
                 
