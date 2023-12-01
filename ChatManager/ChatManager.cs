@@ -27,7 +27,7 @@ public sealed class ChatManager : BasePlugin
 
     public override string ModuleName => "ChatManager";
     public override string ModuleAuthor => "BMathers";
-    public override string ModuleVersion => "1.0.0";
+    public override string ModuleVersion => "1.0.2";
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
     public static JObject? Config { get; set; }
     public static string? _moduleDirectory;
