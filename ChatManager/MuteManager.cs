@@ -32,7 +32,6 @@ public abstract class MuteManager
         
         var mutedPlayersData = File.ReadAllText(_moduleDirectory  + "/muted_players.json");
         MutedPlayers = JsonConvert.DeserializeObject<List<MutedPlayer>>(mutedPlayersData);
-        CheckMutedPlayers();
         return JsonConvert.DeserializeObject<List<MutedPlayer>>(mutedPlayersData);
         
     }

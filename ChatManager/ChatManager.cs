@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
 using System.Timers;
 using CounterStrikeSharp.API;
 using CounterStrikeSharp.API.Core;
@@ -7,6 +9,7 @@ using CounterStrikeSharp.API.Core.Attributes.Registration;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Memory;
 using CounterStrikeSharp.API.Modules.Utils;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -29,7 +32,7 @@ public sealed class ChatManager : BasePlugin
     public static JObject? Config { get; set; }
     public static string? _moduleDirectory;
 
-    public override void Load(bool hotReload)
+    public override async void Load(bool hotReload)
     {
         
         base.Load(hotReload);
@@ -62,9 +65,12 @@ public sealed class ChatManager : BasePlugin
         AddCommand($"css_{muteCommand}", "Mute a player.", MuteCommand);
         AddCommand($"css_{unmuteCommand}", "Unmute a player.", UnmuteCommand);
         AddCommand($"css_{reloadCommand}", "Reload configuration.", ReloadCommand);
-        var timer = new Timer(30000);
-        timer.Elapsed += (sender, e) => CheckMutedPlayers();
-        timer.Start();
+        
+        while (true)
+        {
+            CheckMutedPlayers();
+            await Task.Delay(30000);
+        }
 
     }
 
@@ -124,9 +130,9 @@ public sealed class ChatManager : BasePlugin
                     : "{Default}";
                 string MessageColor = playerTag?["MessageColor"]?.ToString() ?? "{Default}";
 
-                
+                string playerName = AdvertisementFiltering(player.PlayerName);
                 Server.PrintToChatAll(ReplaceTags(
-                    $"{deadStatus}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                    $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                     player.TeamNum));
                 
                 if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -159,9 +165,9 @@ public sealed class ChatManager : BasePlugin
                                 : "{Default}";
                             string MessageColor = permissionTag?["MessageColor"]?.ToString() ?? "{Default}";
                             
-                            
+                            string playerName = AdvertisementFiltering(player.PlayerName);
                             Server.PrintToChatAll(ReplaceTags(
-                                $"{deadStatus}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                                $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                                 player.TeamNum));
                             
                             if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -188,9 +194,9 @@ public sealed class ChatManager : BasePlugin
                     : "{Default}";
                 string MessageColor = everyoneTag?["MessageColor"]?.ToString() ?? "{Default}";
                             
-                            
+                string playerName = AdvertisementFiltering(player.PlayerName);
                 Server.PrintToChatAll(ReplaceTags(
-                    $"{deadStatus}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                    $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                     player.TeamNum));
                 
                 if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -252,8 +258,9 @@ public sealed class ChatManager : BasePlugin
 
                     CCSPlayerController? p = Utilities.GetPlayerFromIndex(i);
                     if (p == null || !p.IsValid || p.IsBot || p.TeamNum != player.TeamNum) continue;
+                    string playerName = AdvertisementFiltering(player.PlayerName);
                     p.PrintToChat(ReplaceTags(
-                        $"{deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                        $"{deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                         player.TeamNum));
                     
                     if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -291,11 +298,11 @@ public sealed class ChatManager : BasePlugin
                             
                             for (int i = 1; i <= Server.MaxPlayers; i++)
                             {
-
+                                string playerName = AdvertisementFiltering(player.PlayerName);
                                 CCSPlayerController? p = Utilities.GetPlayerFromIndex(i);
                                 if (p == null || !p.IsValid || p.IsBot || p.TeamNum != player.TeamNum) continue;
                                 p.PrintToChat(ReplaceTags(
-                                    $" {deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                                    $" {deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                                     player.TeamNum));
                                 
                                 if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -330,8 +337,11 @@ public sealed class ChatManager : BasePlugin
 
                     CCSPlayerController? p = Utilities.GetPlayerFromIndex(i);
                     if (p == null || !p.IsValid || p.IsBot || p.TeamNum != player.TeamNum) continue;
+
+                    string playerName = AdvertisementFiltering(player.PlayerName);
+                    
                     p.PrintToChat(ReplaceTags(
-                        $"{deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{player.PlayerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
+                        $"{deadStatus}{setTeamName(player.TeamNum)}{ChatColors.Default}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
                         player.TeamNum));
                     
                     if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
@@ -360,9 +370,13 @@ public sealed class ChatManager : BasePlugin
         if (Config != null && Config.TryGetValue("Tags", out var tags) && tags is JObject tagsObject)
         {
             
+            string replacePlayerName = AdvertisementFiltering(player.PlayerName);
+            SchemaString<CBasePlayerController> playerName = new SchemaString<CBasePlayerController>(player, "m_iszPlayerName");
+            playerName.Set(replacePlayerName);
+            
             if (tagsObject.TryGetValue(steamid, out var playerTag) && tags is JObject)
             {
-
+                
                 player.Clan = playerTag["ScoreboardTag"]?.ToString() ?? "";
                 return;
             
@@ -411,6 +425,17 @@ public sealed class ChatManager : BasePlugin
         string tag = Config?["Localization"]?["Teams"]?["Dead"]?["Tag"]?.ToString() ?? "*Dead*";
         string color = Config?["Localization"]?["Teams"]?["Dead"]?["Color"]?.ToString() ?? "{Default}";
         return $"{color}{tag}";
+        
+    }
+
+    private string AdvertisementFiltering(string playerName)
+    {
+        
+        string ipRegexPattern = @"\b(?:\d{1,3}\.){3}\d{1,3}\b";
+        string urlRegexPattern = @"(?:http(s)?://)?[\w.-]+\.[a-zA-Z]{2,}(?:/\S*)?";
+
+        playerName = Regex.Replace(playerName, ipRegexPattern, "****", RegexOptions.IgnoreCase);
+        return Regex.Replace(playerName, urlRegexPattern, "****", RegexOptions.IgnoreCase);
         
     }
 
