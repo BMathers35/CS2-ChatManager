@@ -73,7 +73,8 @@ When you define a chat ban for a player, the plugin saves that player in the mut
   },
   "MuteCommands": {
     "MuteCommand": "mute",
-    "UnmuteCommand": "unmute"
+    "UnmuteCommand": "unmute",
+    "ReloadCommand": "cm_reload"
   },
   "Localization": {
     "Teams": {
