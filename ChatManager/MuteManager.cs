@@ -1,14 +1,6 @@
-﻿using System.IO;
-using CounterStrikeSharp.API;
-using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Core.Attributes;
-using CounterStrikeSharp.API.Core.Attributes.Registration;
-using CounterStrikeSharp.API.Modules.Admin;
-using CounterStrikeSharp.API.Modules.Commands;
+﻿using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Entities;
-using CounterStrikeSharp.API.Modules.Utils;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 
 namespace ChatManager;
 
@@ -16,21 +8,21 @@ public abstract class MuteManager
 {
     
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
-    public static string? _moduleDirectory;
-    public static List<MutedPlayer>? MuteManagerLoader(string FilePath)
+    public static string? ModuleDirectory;
+    public static List<MutedPlayer>? MuteManagerLoader(string filePath)
     {
 
-        _moduleDirectory = FilePath;
+        ModuleDirectory = filePath;
         
-        if (!File.Exists(FilePath + "/muted_players.json"))
+        if (!File.Exists(filePath + "/muted_players.json"))
         {
 
             var mutedPlayersTemplate = new List<MutedPlayer>();
-            File.WriteAllText(_moduleDirectory + "/muted_players.json", JsonConvert.SerializeObject(mutedPlayersTemplate));
+            File.WriteAllText(ModuleDirectory + "/muted_players.json", JsonConvert.SerializeObject(mutedPlayersTemplate));
 
         }
         
-        var mutedPlayersData = File.ReadAllText(_moduleDirectory  + "/muted_players.json");
+        var mutedPlayersData = File.ReadAllText(ModuleDirectory  + "/muted_players.json");
         MutedPlayers = JsonConvert.DeserializeObject<List<MutedPlayer>>(mutedPlayersData);
         return JsonConvert.DeserializeObject<List<MutedPlayer>>(mutedPlayersData);
         
@@ -39,7 +31,7 @@ public abstract class MuteManager
     public static void CheckMutedPlayers()
     {
         
-        if (_moduleDirectory == null) return;
+        if (ModuleDirectory == null) return;
         if (MutedPlayers != null)
         {
             Console.WriteLine("[ChatManager] Checking players whose silence period has expired.");
@@ -52,7 +44,7 @@ public abstract class MuteManager
                     Console.WriteLine($"[ChatManager] {expiredMute.Id} muting penalty removed...");
                     MutedPlayers.Remove(expiredMute);
                 }
-                File.WriteAllText(_moduleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
+                File.WriteAllText(ModuleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
             }
         }
         
@@ -61,7 +53,7 @@ public abstract class MuteManager
     public static List<MutedPlayer>? MutePlayer(CCSPlayerController? player, int duration)
     {
         
-        if (_moduleDirectory == null) return null;
+        if (ModuleDirectory == null) return null;
         if (player == null || !player.IsValid || player.IsBot) return null;
 
         if (MutedPlayers == null)
@@ -79,7 +71,7 @@ public abstract class MuteManager
         });
 
         Console.WriteLine($"[ChatManager] Player {player.PlayerName} ({steamId}) is silenced for {duration} seconds.");
-        File.WriteAllText(_moduleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
+        File.WriteAllText(ModuleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
         return MutedPlayers;
         
     }
@@ -95,25 +87,15 @@ public abstract class MuteManager
         {
             
             string steamId = new SteamID(player.SteamID).SteamId64.ToString();
-            
-            if (steamId == null)
+
+            if (!MutedPlayers.Exists(p => p.Id == steamId))
             {
-                Console.WriteLine("[ChatManager] Failed to receive a valid SteamID.");
+                Console.WriteLine($"[ChatManager] Player {player.PlayerName} ({steamId}) has either completed or has never been silenced.");
                 return false;
             }
-            else
-            {
-                
-                if (!MutedPlayers.Exists(p => p.Id == steamId))
-                {
-                    Console.WriteLine($"[ChatManager] Player {player.PlayerName} ({steamId}) has either completed or has never been silenced.");
-                    return false;
-                }
 
-                return true;
-                
-            }
-            
+            return true;
+
         }
         
     }
@@ -133,7 +115,7 @@ public abstract class MuteManager
             {
                 MutedPlayers.Remove(removedPlayer);
                 Console.WriteLine($"[ChatManager] Player {steamId} has been unmuted using the command.");
-                File.WriteAllText(_moduleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
+                File.WriteAllText(ModuleDirectory + "/muted_players.json", JsonConvert.SerializeObject(MutedPlayers));
                 return true;
             }
 
