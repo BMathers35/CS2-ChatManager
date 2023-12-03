@@ -1,4 +1,7 @@
-﻿using System.Text;
+﻿using System;
+using System.Text;
+using System.Net.Http;
+using System.Threading.Tasks;
 using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Cvars;
 
@@ -23,43 +26,49 @@ public class Discord
                 webhookUrl = "";
                 break;
         }
+        
+        Console.WriteLine($"Webhook URL: {webhookUrl}");
 
         if (!string.IsNullOrEmpty(webhookUrl))
         {
-            var httpClient = new HttpClient();
-            DateTimeOffset now = DateTimeOffset.Now;
-            string timestamp = now.ToString("yyyy-MM-ddTHH:mm:ss.fffK");
 
-            var payload = new
+            try
             {
-                content = "",
-                tts = false,
-                embeds = new[]
+                
+                var httpClient = new HttpClient();
+                DateTime now = DateTime.Now;
+                string formattedDateTime = now.ToString("dd-MM-yyyy HH:mm:ss");
+                
+                var payload = new
                 {
-                    new
+                    username = "ChatManager",
+                    content = "",
+                    tts = false,
+                    embeds = new[]
                     {
-                        type = "rich",
-                        title = $"{ConVar.Find("hostname")!.StringValue}",
-                        description = $"```\n{message}\n```",
-                        color = 0xff0000,
-                        fields = new[]
+                        new
                         {
-                            new { name = $"{ChatManager._config?.Messages.Discord.PlayerName}", value = $"{player?.PlayerName}", inline = true },
-                            new { name = $"{ChatManager._config?.Messages.Discord.SteamId}", value = $"{player?.SteamID}", inline = true },
-                            new { name = $"{ChatManager._config?.Messages.Discord.Profile}", value = $"[{ChatManager._config?.Messages.Discord.ProfileLink}](https://steamcommunity.com/profiles/{player?.SteamID})", inline = true }
-                        },
-                        timestamp = $"{timestamp}",
-                        author = new
-                        {
-                            name = $"{player?.PlayerName}",
-                            icon_url = $"{ChatManager._config?.Messages.Discord.PlayerImage}"
+                            type = "rich",
+                            title = $"{player.PlayerName}",
+                            description = $"```\n[{formattedDateTime}] {message.ToString()}\n```",
+                            color = 0xff0000,
+                            url = $"https://steamcommunity.com/profiles/{player?.SteamID}"
                         }
                     }
-                }
-            };
-
-            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-            await httpClient.PostAsync(webhookUrl, content);
+                };
+                
+                var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+                HttpResponseMessage response = await httpClient.PostAsync(webhookUrl, content);
+                response.EnsureSuccessStatusCode();
+                string result = await response.Content.ReadAsStringAsync();
+                
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"[ChatManager] Discord Webhook Error: {e.Message}");
+                throw;
+            }
+            
         }
     }
     

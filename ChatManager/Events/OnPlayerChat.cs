@@ -22,8 +22,11 @@ public class OnPlayerChat
         
         if (message.StartsWith("!") || message.StartsWith("/"))
         {
-            if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
+            Console.WriteLine("Komut algılandı, discord webhook ile bildirim gönderilecek...");
+            Console.WriteLine($"Logging Commands: {ChatManager._config?.GeneralSettings.LoggingCommands}");
+            if (ChatManager._config.GeneralSettings.LoggingCommands)
             {
+                Console.WriteLine("Webhook işlemi başladı...");
                 _ = Task.Run(() => Utils.Discord.Send(player, message, "Command"));
             }
             return HookResult.Continue;
@@ -58,7 +61,7 @@ public class OnPlayerChat
             
             if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
             {
-                message = Utils.Helpers.ReplaceBannedWords(message);
+                message = Utils.Helpers.FilterAds(Utils.Helpers.ReplaceBannedWords(message));
             }
             
             foreach (var tag in ChatManager._config.Tags)
