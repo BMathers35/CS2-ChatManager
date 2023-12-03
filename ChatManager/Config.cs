@@ -4,31 +4,8 @@ using CounterStrikeSharp.API.Modules.Memory;
 
 namespace ChatManager;
 
-public class Discord
-{
-    
-    [JsonPropertyName("PlayerImage")]
-    public string PlayerImage { get; set; } = "-";
-    
-    [JsonPropertyName("PlayerName")]
-    public string PlayerName { get; set; } = "Player Name";
-    
-    [JsonPropertyName("SteamId")]
-    public string SteamId { get; set; } = "SteamID64";
-    
-    [JsonPropertyName("Profile")]
-    public string Profile { get; set; } = "Profile";
-    
-    [JsonPropertyName("ProfileLink")]
-    public string ProfileLink { get; set; } = "Steam Profile";
-    
-}
-
 public class Messages
 {
-
-    [JsonPropertyName("Discord")]
-    public Discord Discord { get; set; } = new Discord();
 
     [JsonPropertyName("AlreadyMuted")]
     public string AlreadyMuted { get; set; } = "{PLAYERNAME} has already been silenced.";
