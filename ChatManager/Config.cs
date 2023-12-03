@@ -82,6 +82,9 @@ public class GeneralSettings
     [JsonPropertyName("BlockBannedWordsInChat")]
     public bool BlockBannedWordsInChat { get; set; } = false;
     
+    [JsonPropertyName("DebugDiscordWebhook")]
+    public bool DebugDiscordWebhook { get; set; } = false;
+    
     [JsonPropertyName("LoggingChatMessagesWithDiscord")]
     public bool LoggingMessages { get; set; } = false;
     

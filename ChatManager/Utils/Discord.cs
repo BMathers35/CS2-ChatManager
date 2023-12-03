@@ -61,6 +61,11 @@ public class Discord
                 HttpResponseMessage response = await httpClient.PostAsync(webhookUrl, content);
                 response.EnsureSuccessStatusCode();
                 string result = await response.Content.ReadAsStringAsync();
+
+                if (ChatManager._config != null && ChatManager._config.GeneralSettings.DebugDiscordWebhook)
+                {
+                    Console.WriteLine($"[ChatManager] Result of HTTP Request: {result}");
+                }
                 
             }
             catch (Exception e)
