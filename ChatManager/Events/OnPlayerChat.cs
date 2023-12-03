@@ -23,10 +23,10 @@ public class OnPlayerChat
         
         if (message.StartsWith("!") || message.StartsWith("/"))
         {
-            if (ChatManager._config.GeneralSettings.LoggingCommands)
+            if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
             {
                 Console.WriteLine("Webhook işlemi başladı...");
-                _ = Task.Run(() => Utils.Discord.Send(player, message, "Command"));
+                _ = Task.Run(() => Discord.Send(player, message, "Command"));
             }
             return HookResult.Continue;
         }
@@ -81,7 +81,7 @@ public class OnPlayerChat
                     
                     if (ChatManager._config.GeneralSettings.LoggingMessages)
                     {
-                        _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
                     }
 
                     return HookResult.Handled;
@@ -109,7 +109,7 @@ public class OnPlayerChat
                     
                         if (ChatManager._config.GeneralSettings.LoggingMessages)
                         {
-                            _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
                         }
 
                         return HookResult.Handled;
@@ -139,7 +139,7 @@ public class OnPlayerChat
                     
                         if (ChatManager._config.GeneralSettings.LoggingMessages)
                         {
-                            _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
                         }
 
                         return HookResult.Handled;
@@ -163,7 +163,7 @@ public class OnPlayerChat
                     
                     if (ChatManager._config.GeneralSettings.LoggingMessages)
                     {
-                        _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
                     }
 
                     return HookResult.Handled;

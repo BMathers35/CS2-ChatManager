@@ -13,7 +13,7 @@ public sealed class ChatManager : BasePlugin, IPluginConfig<Config>
     public override string ModuleAuthor => "BMathers";
     public override string ModuleVersion => "1.1.0";
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
-    private int ModuleConfigVersion => 1;
+    private int ModuleConfigVersion => 2;
     public required Config Config { get; set; }
     public static string? _moduleDirectory;
     public static Config? _config;

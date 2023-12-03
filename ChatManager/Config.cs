@@ -135,6 +135,6 @@ public class Config : IBasePluginConfig
     public List<string> BannedWords { get; set; } = new List<string>();
 
     [JsonPropertyName("ConfigVersion")] 
-    public int Version { get; set; } = 1;
+    public int Version { get; set; } = 2;
 
 }
