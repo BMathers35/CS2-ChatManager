@@ -4,8 +4,6 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
-using CounterStrikeSharp.API.Modules.Utils;
-using Newtonsoft.Json.Linq;
 
 namespace ChatManager.Events;
 
@@ -15,121 +13,156 @@ public class OnPlayerChat
     public static HookResult Run(CCSPlayerController? player, CommandInfo info)
     {
 
-        // if (player == null || !player.IsValid) return HookResult.Continue;
-        // string steamid = new SteamID(player.SteamID).SteamId64.ToString();
-        // var checkMute = MuteManager.IsPlayerMuted(player);
-        // if (string.IsNullOrWhiteSpace(info.GetArg(1))) return HookResult.Handled;
-        //
-        // if (info.GetArg(1).StartsWith("!") || info.GetArg(1).StartsWith("/"))
-        // {
-        //     if (Config?["Logs"]?["Commands"]?["Active"]?.ToString().ToLower() == "true")
-        //     {
-        //         _ = Task.Run(() => Utils.Discord.Send(player, info.GetArg(1), "Command", Config));
-        //     }
-        //     return HookResult.Continue;
-        // }
-        //
-        // if (checkMute)
-        // {
-        //     player.PrintToChat($"\u200e{ChatColors.Purple}[ChatManager] {ChatColors.Darkred}{Config?["Localization"]?["Mute"]?["CanNotSendMessage"]}");
-        //     return HookResult.Handled;
-        // }
-        //
-        // if (Config != null && Config.TryGetValue("Tags", out var Tags) && Tags is JObject tagsObject)
-        // {
-        //
-        //     string deadStatus = !player.PawnIsAlive ? Utils.Helpers.GetDeadTag() : "";
-        //
-        //     if (tagsObject.TryGetValue(steamid, out var playerTag) && playerTag is JObject)
-        //     {
-        //
-        //         string Prefix = playerTag["Prefix"]?.ToString() ?? "";
-        //         string? NickColor = !string.IsNullOrEmpty(playerTag?["NickColor"]?.ToString())
-        //             ? playerTag?["NickColor"]?.ToString()
-        //             : "{Default}";
-        //         string MessageColor = playerTag?["MessageColor"]?.ToString() ?? "{Default}";
-        //
-        //         string playerName = Utils.Helpers.AdvertisementFiltering(player.PlayerName);
-        //         Server.PrintToChatAll(Colors.Tags(
-        //             $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
-        //             player.TeamNum));
-        //         
-        //         if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
-        //         {
-        //             _ = Task.Run(() => Utils.Discord.Send(player, info.GetArg(1), "Message", Config));
-        //         }
-        //
-        //         return HookResult.Handled;
-        //
-        //     }
-        //
-        //     foreach (var tagKey in tagsObject.Properties())
-        //     {
-        //
-        //         if (tagKey.Name.StartsWith("@"))
-        //         {
-        //
-        //             string Permission = tagKey.Name;
-        //             bool hasPermission = AdminManager.PlayerHasPermissions(player, Permission);
-        //
-        //             if (hasPermission)
-        //             {
-        //
-        //                 if (tagsObject.TryGetValue(Permission, out var permissionTag) && permissionTag is JObject)
-        //                 {
-        //
-        //                     string Prefix = permissionTag["Prefix"]?.ToString() ?? "";
-        //                     string? NickColor = !string.IsNullOrEmpty(permissionTag?["NickColor"]?.ToString())
-        //                         ? permissionTag["NickColor"]?.ToString()
-        //                         : "{Default}";
-        //                     string MessageColor = permissionTag?["MessageColor"]?.ToString() ?? "{Default}";
-        //                     
-        //                     string playerName = Utils.Helpers.AdvertisementFiltering(player.PlayerName);
-        //                     Server.PrintToChatAll(Colors.Tags(
-        //                         $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
-        //                         player.TeamNum));
-        //                     
-        //                     if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
-        //                     {
-        //                         _ = Task.Run(() => Utils.Discord.Send(player, info.GetArg(1), "Message", Config));
-        //                     }
-        //                     
-        //                     return HookResult.Handled;
-        //
-        //                 }
-        //                 
-        //             }
-        //
-        //         }
-        //         
-        //     }
-        //
-        //     if (tagsObject.TryGetValue("everyone", out var everyoneTag) && everyoneTag is JObject)
-        //     {
-        //         
-        //         string Prefix = everyoneTag["Prefix"]?.ToString() ?? "";
-        //         string? NickColor = !string.IsNullOrEmpty(everyoneTag?["NickColor"]?.ToString())
-        //             ? everyoneTag["NickColor"]?.ToString()
-        //             : "{Default}";
-        //         string MessageColor = everyoneTag?["MessageColor"]?.ToString() ?? "{Default}";
-        //                     
-        //         string playerName = Utils.Helpers.AdvertisementFiltering(player.PlayerName);
-        //         Server.PrintToChatAll(Colors.Tags(
-        //             $"{deadStatus}\u200e{Prefix}{NickColor}{playerName}{ChatColors.Default}: {MessageColor}{info.GetArg(1)}",
-        //             player.TeamNum));
-        //         
-        //         if (Config?["Logs"]?["ChatMessages"]?["Active"]?.ToString().ToLower() == "true")
-        //         {
-        //             _ = Task.Run(() => Utils.Discord.Send(player, info.GetArg(1), "Message", Config));
-        //         }
-        //         
-        //         return HookResult.Handled;
-        //         
-        //     }
-        //     
-        //
-        // }
+        string message = info.GetArg(1);
+        
+        if (player == null || !player.IsValid || player.IsBot) return HookResult.Handled;
+        if (string.IsNullOrEmpty(message)) return HookResult.Handled;
 
+        string steamId = new SteamID(player.SteamID).SteamId64.ToString();
+        
+        if (message.StartsWith("!") || message.StartsWith("/"))
+        {
+            if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
+            {
+                _ = Task.Run(() => Utils.Discord.Send(player, message, "Command"));
+            }
+            return HookResult.Continue;
+        }
+
+        if (MuteManager.IsPlayerMuted(player))
+        {
+            player.PrintToChat($"{ChatManager._config?.Messages.CanNotSendMessage}");
+            return HookResult.Handled;
+        }
+
+        if (ChatManager._config?.Tags.Any() != null)
+        {
+            
+            string deadStatus = "";
+            string playerTeam = "";
+                
+            if (player.TeamNum == 1)
+            {
+                playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
+            }
+            else
+            {
+                deadStatus = !player.PawnIsAlive ? ChatManager._config.TeamTags.DeadSyntax : "";
+            }
+                
+            string playerName = player.PlayerName;
+            
+            foreach (var tag in ChatManager._config.Tags)
+            {
+                
+                if (tag.Key.Contains(steamId))
+                {
+
+                    string prefix = tag.Value;
+                    
+                    var replace = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}"
+                        .Replace("{STATUS_DEAD}", deadStatus)
+                        .Replace("{PLAYER_NAME}", $"{prefix}{playerName}")
+                        .Replace("{PLAYER_MESSAGE}", message)
+                        .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+                    Server.PrintToChatAll(Colors.Tags(replace));
+                    
+                    if (ChatManager._config.GeneralSettings.LoggingMessages)
+                    {
+                        _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                    }
+
+                    return HookResult.Handled;
+
+                }
+                
+                if (tag.Key.StartsWith("#"))
+                {
+
+                    string group = tag.Key;
+                    bool hasPermission = AdminManager.PlayerInGroup(player, group);
+
+                    if (hasPermission)
+                    {
+                        
+                        string prefix = tag.Value;
+                    
+                        var replace = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}"
+                            .Replace("{STATUS_DEAD}", deadStatus)
+                            .Replace("{PLAYER_NAME}", $"{prefix}{playerName}")
+                            .Replace("{PLAYER_MESSAGE}", message)
+                            .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+                        Server.PrintToChatAll(Colors.Tags(replace));
+                    
+                        if (ChatManager._config.GeneralSettings.LoggingMessages)
+                        {
+                            _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                        }
+
+                        return HookResult.Handled;
+                        
+                    }
+
+                }
+
+                if (tag.Key.StartsWith("@"))
+                {
+
+                    string permission = tag.Key;
+                    bool hasPermission = AdminManager.PlayerHasPermissions(player, permission);
+
+                    if (hasPermission)
+                    {
+                        
+                        string prefix = tag.Value;
+                    
+                        var replace = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}"
+                            .Replace("{STATUS_DEAD}", deadStatus)
+                            .Replace("{PLAYER_NAME}", $"{prefix}{playerName}")
+                            .Replace("{PLAYER_MESSAGE}", message)
+                            .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+                        Server.PrintToChatAll(Colors.Tags(replace));
+                    
+                        if (ChatManager._config.GeneralSettings.LoggingMessages)
+                        {
+                            _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                        }
+
+                        return HookResult.Handled;
+                        
+                    }
+
+                }
+                
+                if (tag.Key.Contains("everyone"))
+                {
+
+                    string prefix = tag.Value;
+                    
+                    var replace = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}"
+                        .Replace("{STATUS_DEAD}", deadStatus)
+                        .Replace("{PLAYER_NAME}", $"{prefix}{playerName}")
+                        .Replace("{PLAYER_MESSAGE}", message)
+                        .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+                    Server.PrintToChatAll(Colors.Tags(replace));
+                    
+                    if (ChatManager._config.GeneralSettings.LoggingMessages)
+                    {
+                        _ = Task.Run(() => Utils.Discord.Send(player, message, "Message"));
+                    }
+
+                    return HookResult.Handled;
+
+                }
+                
+            }
+
+        }
+        
         return HookResult.Continue;
 
     }

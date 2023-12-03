@@ -9,7 +9,7 @@ namespace ChatManager.Utils;
 public class Helpers
 {
 
-    public string setTeamName(int teamNum)
+    public static string setTeamName(int teamNum)
     {
 
         string teamName = "";
@@ -34,11 +34,9 @@ public class Helpers
 
     }
     
-    public string GetDeadTag()
+    public static bool IsNumeric(string input)
     {
-        
-        return $"{ChatManager._config?.TeamTags.DeadSyntax}";
-        
+        return input.All(char.IsDigit);
     }
     
     public static string AdvertisementFiltering(string playerName)

@@ -59,23 +59,6 @@ public class Messages
     
 }
 
-public class Tags : List<string>
-{
-    
-    [JsonPropertyName("@css/root")]
-    public string ExampleTagOne { get; set; } = "{Red}[Founder]";
-
-    [JsonPropertyName("#css/admin")]
-    public string ExampleTagTwo { get; set; } = "{Gold}[Admin]";
-
-    [JsonPropertyName("76561199112108514")]
-    public string ExampleTagThree { get; set; } = "{Purple}[BMathers]";
-
-    [JsonPropertyName("everyone")]
-    public string ExampleTagFour { get; set; } = "{Green}[Player]";
-
-}
-
 public class TeamTags
 {
     
@@ -148,7 +131,7 @@ public class Config : IBasePluginConfig
     public GeneralSettings GeneralSettings { get; set; } = new GeneralSettings();
     
     [JsonPropertyName("Tags")]
-    public List<string> Tags { get; set; } = new Tags();
+    public Dictionary<string, string> Tags { get; set; } = new Dictionary<string, string>();
     
     [JsonPropertyName("TeamTags")]
     public TeamTags TeamTags { get; set; } = new TeamTags();

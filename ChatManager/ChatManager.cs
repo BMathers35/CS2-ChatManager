@@ -5,7 +5,7 @@ using Helpers = ChatManager.Utils.Helpers;
 
 namespace ChatManager;
 
-[MinimumApiVersion(75)]
+[MinimumApiVersion(88)]
 public sealed class ChatManager : BasePlugin, IPluginConfig<Config>
 {
 
@@ -44,7 +44,6 @@ public sealed class ChatManager : BasePlugin, IPluginConfig<Config>
         
         AddCommand($"css_{Config.GeneralSettings.MuteCommand}", "Mute a player.", Commands.Mute.Command);
         AddCommand($"css_{Config.GeneralSettings.UnmuteCommand}", "Unmute a player.", Commands.Unmute.Command);
-        AddCommand($"css_{Config.GeneralSettings.ReloadCommand}", "Reload configuration.", Commands.Reload.Command);
         
         while (true)
         {
