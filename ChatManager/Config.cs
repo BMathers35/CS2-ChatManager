@@ -96,6 +96,9 @@ public class ChatSyntax
 public class GeneralSettings
 {
     
+    [JsonPropertyName("Prefix")]
+    public string Prefix { get; set; } = "{Purple}[ChatManager]";
+    
     [JsonPropertyName("AdBlockingOnChatAndPlayerNames")]
     public bool AdBlockingOnChatAndPlayerNames { get; set; } = true;
     
