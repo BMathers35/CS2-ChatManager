@@ -11,7 +11,7 @@ public sealed class ChatManager : BasePlugin, IPluginConfig<Config>
 
     public override string ModuleName => "ChatManager";
     public override string ModuleAuthor => "BMathers";
-    public override string ModuleVersion => "1.1.0";
+    public override string ModuleVersion => "1.1.2";
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
     private int ModuleConfigVersion => 2;
     public required Config Config { get; set; }

@@ -25,7 +25,6 @@ public class OnPlayerChat
         {
             if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
             {
-                Console.WriteLine("Webhook işlemi başladı...");
                 _ = Task.Run(() => Discord.Send(player, message, "Command"));
             }
             return HookResult.Continue;
