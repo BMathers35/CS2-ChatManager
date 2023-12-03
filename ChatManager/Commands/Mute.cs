@@ -33,7 +33,7 @@ public class Mute
 
         if (matchingPlayers.Count == 0)
         {
-            player.PrintToChat($"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NoTarget}");
+            player.PrintToChat($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NoTarget}");
         }
         else if (matchingPlayers.Count == 1)
         {
@@ -47,7 +47,7 @@ public class Mute
 
                     // {PLAYERNAME} isimli oyuncu zaten susturulmuş.
                     var replace =
-                        $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.AlreadyMuted}"
+                        $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.AlreadyMuted}"
                             .Replace("{PLAYERNAME}", targetPlayer.PlayerName);
                     player.PrintToChat(Colors.Tags(replace));
                     
@@ -61,7 +61,7 @@ public class Mute
                         File.WriteAllText( ChatManager._moduleDirectory + "/muted_players.json", JsonConvert.SerializeObject(mutedPlayers));
                         // {PLAYERNAME} isimli oyuncu {DURATION} saniye boyunca susturuldu.
                         var replace =
-                            $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.SilencedForSeconds}"
+                            $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.SilencedForSeconds}"
                                 .Replace("{PLAYERNAME}", targetPlayer.PlayerName)
                                 .Replace("{DURATION}", muteDuration.ToString());
                         player.PrintToChat(Colors.Tags(replace));
@@ -74,7 +74,7 @@ public class Mute
         }
         else
         {
-            player.PrintToChat($"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.SilencedForSeconds}");
+            player.PrintToChat($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.SilencedForSeconds}");
         }
 
     }

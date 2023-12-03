@@ -32,7 +32,7 @@ public class Unmute
 
         if (matchingPlayers.Count == 0)
         {
-            player.PrintToChat($"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NoTarget}");
+            player.PrintToChat($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NoTarget}");
         }
         else if (matchingPlayers.Count == 1)
         {
@@ -49,7 +49,7 @@ public class Unmute
                     {
                         // {targetPlayer.PlayerName} isimli oyuncunun susturulması kaldırıldı.
                         var replace =
-                            $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.UnmutePlayer}"
+                            $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.UnmutePlayer}"
                                 .Replace("{PLAYERNAME}", targetPlayer.PlayerName);
                         player.PrintToChat(Colors.Tags(replace));
                         
@@ -57,7 +57,7 @@ public class Unmute
                         {
                             // {player.PlayerName} isimli yetkili susturmanızı kaldırdı.
                             var replaceTarget =
-                                $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.UnmutePlayerInfo}"
+                                $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Green}{ChatManager._config?.Messages.UnmutePlayerInfo}"
                                     .Replace("{ADMIN}", player.PlayerName);
                             targetPlayer.PrintToChat(Colors.Tags(replaceTarget));
                             
@@ -67,7 +67,7 @@ public class Unmute
                     {
                         // {targetPlayer.PlayerName} oyuncusunun sohbet yasaklaması kaldırılamadı!
                         var replace =
-                            $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CouldNotRemove}"
+                            $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CouldNotRemove}"
                                 .Replace("{PLAYERNAME}", targetPlayer.PlayerName);
                         player.PrintToChat(Colors.Tags(replace));
                         
@@ -77,7 +77,7 @@ public class Unmute
                 {
                     // {targetPlayer.PlayerName} isimli oyuncunun cezası sonlanmış veya hiç susturulmamış.
                     var replace =
-                        $"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NotBanned}"
+                        $"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.NotBanned}"
                             .Replace("{PLAYERNAME}", targetPlayer.PlayerName);
                     player.PrintToChat(Colors.Tags(replace));
                     
@@ -87,7 +87,7 @@ public class Unmute
         else
         {
             
-            player.PrintToChat($"{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.MultipleTargetsFound}");
+            player.PrintToChat($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.MultipleTargetsFound}");
             
         }
         

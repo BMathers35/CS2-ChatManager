@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace ChatManager.Events;
 
@@ -22,8 +23,6 @@ public class OnPlayerChat
         
         if (message.StartsWith("!") || message.StartsWith("/"))
         {
-            Console.WriteLine("Komut algılandı, discord webhook ile bildirim gönderilecek...");
-            Console.WriteLine($"Logging Commands: {ChatManager._config?.GeneralSettings.LoggingCommands}");
             if (ChatManager._config.GeneralSettings.LoggingCommands)
             {
                 Console.WriteLine("Webhook işlemi başladı...");
@@ -34,7 +33,7 @@ public class OnPlayerChat
 
         if (MuteManager.IsPlayerMuted(player))
         {
-            player.PrintToChat($"{ChatManager._config?.Messages.CanNotSendMessage}");
+            player.PrintToChat(Colors.Tags($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CanNotSendMessage}"));
             return HookResult.Handled;
         }
 

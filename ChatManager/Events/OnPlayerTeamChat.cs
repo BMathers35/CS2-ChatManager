@@ -4,6 +4,7 @@ using CounterStrikeSharp.API.Core;
 using CounterStrikeSharp.API.Modules.Admin;
 using CounterStrikeSharp.API.Modules.Commands;
 using CounterStrikeSharp.API.Modules.Entities;
+using CounterStrikeSharp.API.Modules.Utils;
 
 namespace ChatManager.Events;
 
@@ -31,7 +32,7 @@ public class OnPlayerTeamChat
 
         if (MuteManager.IsPlayerMuted(player))
         {
-            player.PrintToChat($"{ChatManager._config?.Messages.CanNotSendMessage}");
+            player.PrintToChat(Colors.Tags($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CanNotSendMessage}"));
             return HookResult.Handled;
         }
 
