@@ -40,7 +40,8 @@ public class OnPlayerChat
             
             string deadStatus = "";
             string playerTeam = "";
-                
+            string playerName = player.PlayerName;
+            
             if (player.TeamNum == 1)
             {
                 playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
@@ -49,8 +50,16 @@ public class OnPlayerChat
             {
                 deadStatus = !player.PawnIsAlive ? ChatManager._config.TeamTags.DeadSyntax : "";
             }
-                
-            string playerName = player.PlayerName;
+
+            if (ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
+            {
+                playerName = Utils.Helpers.FilterAds(playerName);
+            }
+            
+            if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
+            {
+                message = Utils.Helpers.ReplaceBannedWords(message);
+            }
             
             foreach (var tag in ChatManager._config.Tags)
             {

@@ -52,6 +52,16 @@ public class OnPlayerTeamChat
                 teamMessage = $"\u200e{ChatManager._config.ChatSyntax.CtSyntax}";
             }
             
+            if (ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
+            {
+                playerName = Utils.Helpers.FilterAds(playerName);
+            }
+            
+            if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
+            {
+                message = Utils.Helpers.ReplaceBannedWords(message);
+            }
+            
             foreach (var tag in ChatManager._config.Tags)
             {
                 

@@ -33,20 +33,38 @@ public class Helpers
         return teamName;
 
     }
-    
-    public static bool IsNumeric(string input)
+
+    public static string ReplaceBannedWords(string target)
     {
-        return input.All(char.IsDigit);
+
+        List<string>? bannedWords = ChatManager._config?.BannedWords;
+
+        if (bannedWords != null && bannedWords.Any())
+        {
+            
+            foreach (var bannedWord in bannedWords)
+            {
+                string pattern = $@"\b{Regex.Escape(bannedWord)}\b";
+                if (Regex.IsMatch(target, pattern, RegexOptions.IgnoreCase))
+                {
+                    target = Regex.Replace(target, pattern, "****", RegexOptions.IgnoreCase);
+                }
+            }
+            
+        }
+
+        return target;
+
     }
     
-    public static string AdvertisementFiltering(string playerName)
+    public static string FilterAds(string target)
     {
         
         string ipRegexPattern = @"\b(?:\d{1,3}\.){3}\d{1,3}\b";
         string urlRegexPattern = @"(?:http(s)?://)?[\w.-]+\.[a-zA-Z]{2,}(?:/\S*)?";
 
-        playerName = Regex.Replace(playerName, ipRegexPattern, "****", RegexOptions.IgnoreCase);
-        return Regex.Replace(playerName, urlRegexPattern, "****", RegexOptions.IgnoreCase);
+        target = Regex.Replace(target, ipRegexPattern, "****", RegexOptions.IgnoreCase);
+        return Regex.Replace(target, urlRegexPattern, "****", RegexOptions.IgnoreCase);
         
     }
     

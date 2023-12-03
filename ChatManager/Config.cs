@@ -96,6 +96,12 @@ public class ChatSyntax
 public class GeneralSettings
 {
     
+    [JsonPropertyName("AdBlockingOnChatAndPlayerNames")]
+    public bool AdBlockingOnChatAndPlayerNames { get; set; } = true;
+    
+    [JsonPropertyName("BlockBannedWordsInChat")]
+    public bool BlockBannedWordsInChat { get; set; } = false;
+    
     [JsonPropertyName("LoggingChatMessagesWithDiscord")]
     public bool LoggingMessages { get; set; } = false;
     
@@ -107,9 +113,6 @@ public class GeneralSettings
     
     [JsonPropertyName("UnmuteCommand")]
     public string UnmuteCommand { get; set; } = "unmute";
-    
-    [JsonPropertyName("ReloadCommand")]
-    public string ReloadCommand { get; set; } = "cm_reload";
     
 }
 
@@ -144,6 +147,9 @@ public class Config : IBasePluginConfig
     
     [JsonPropertyName("Messages")]
     public Messages Messages { get; set; } = new Messages();
+    
+    [JsonPropertyName("BannedWords")]
+    public List<string> BannedWords { get; set; } = new List<string>();
 
     [JsonPropertyName("ConfigVersion")] 
     public int Version { get; set; } = 1;
