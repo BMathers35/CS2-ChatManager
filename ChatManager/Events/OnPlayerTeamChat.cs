@@ -35,33 +35,38 @@ public class OnPlayerTeamChat
             player.PrintToChat(Colors.Tags($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CanNotSendMessage}"));
             return HookResult.Handled;
         }
+        
+        string deadStatus = !player.PawnIsAlive ? ChatManager._config.TeamTags.DeadSyntax : "";
+        string playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
+        string playerName = player.PlayerName;
+        string teamMessage = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}";
 
-        if (ChatManager._config?.Tags.Any() != null)
+        if (player.TeamNum == 2)
         {
+            teamMessage = $"\u200e{ChatManager._config.ChatSyntax.Syntax}";
+        }
+        else if (player.TeamNum == 3)
+        {
+            teamMessage = $"\u200e{ChatManager._config.ChatSyntax.CtSyntax}";
+        }
             
-            string deadStatus = !player.PawnIsAlive ? ChatManager._config.TeamTags.DeadSyntax : "";
-            string playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
-            string playerName = player.PlayerName;
-            string teamMessage = $"\u200e{ChatManager._config.ChatSyntax.AllSyntax}";
+        if (ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
+        {
+            playerName = Utils.Helpers.FilterAds(playerName);
+        }
+            
+        if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
+        {
+            message = Utils.Helpers.ReplaceBannedWords(message);
+        }
+        
+        if (ChatManager._config.GeneralSettings.LoggingMessages)
+        {
+            _ = Task.Run(() => Discord.Send(player, message, "Message"));
+        }
 
-            if (player.TeamNum == 2)
-            {
-                teamMessage = $"\u200e{ChatManager._config.ChatSyntax.Syntax}";
-            }
-            else if (player.TeamNum == 3)
-            {
-                teamMessage = $"\u200e{ChatManager._config.ChatSyntax.CtSyntax}";
-            }
-            
-            if (ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
-            {
-                playerName = Utils.Helpers.FilterAds(playerName);
-            }
-            
-            if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
-            {
-                message = Utils.Helpers.ReplaceBannedWords(message);
-            }
+        if (ChatManager._config != null && ChatManager._config.Tags.Any())
+        {
             
             foreach (var tag in ChatManager._config.Tags)
             {
@@ -172,6 +177,19 @@ public class OnPlayerTeamChat
                 
             }
 
+        }
+        else
+        {
+                    
+            var replace = $"\u200e{ChatManager._config?.ChatSyntax.AllSyntax}"
+                .Replace("{STATUS_DEAD}", deadStatus)
+                .Replace("{PLAYER_NAME}", $"{playerName}")
+                .Replace("{PLAYER_MESSAGE}", message)
+                .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+            Server.PrintToChatAll(Colors.Tags(replace));
+            return HookResult.Handled;
+            
         }
         
         return HookResult.Continue;

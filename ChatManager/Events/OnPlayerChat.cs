@@ -35,32 +35,38 @@ public class OnPlayerChat
             player.PrintToChat(Colors.Tags($"\u200e{ChatColors.Purple}{ChatManager._config?.GeneralSettings.Prefix} {ChatColors.Darkred}{ChatManager._config?.Messages.CanNotSendMessage}"));
             return HookResult.Handled;
         }
-
-        if (ChatManager._config?.Tags.Any() != null)
+        
+        string deadStatus = "";
+        string playerTeam = "";
+        string playerName = player.PlayerName;
+            
+        if (player.TeamNum == 1)
         {
-            
-            string deadStatus = "";
-            string playerTeam = "";
-            string playerName = player.PlayerName;
-            
-            if (player.TeamNum == 1)
-            {
-                playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
-            }
-            else
-            {
+            playerTeam = Utils.Helpers.setTeamName(player.TeamNum);
+        }
+        else
+        {
+            if (ChatManager._config != null)
                 deadStatus = !player.PawnIsAlive ? ChatManager._config.TeamTags.DeadSyntax : "";
-            }
+        }
 
-            if (ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
-            {
-                playerName = Utils.Helpers.FilterAds(playerName);
-            }
+        if (ChatManager._config != null && ChatManager._config.GeneralSettings.AdBlockingOnChatAndPlayerNames)
+        {
+            playerName = Utils.Helpers.FilterAds(playerName);
+        }
             
-            if (ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
-            {
-                message = Utils.Helpers.FilterAds(Utils.Helpers.ReplaceBannedWords(message));
-            }
+        if (ChatManager._config != null && ChatManager._config.GeneralSettings.BlockBannedWordsInChat)
+        {
+            message = Utils.Helpers.FilterAds(Utils.Helpers.ReplaceBannedWords(message));
+        }
+        
+        if (ChatManager._config != null && ChatManager._config.GeneralSettings.LoggingMessages)
+        {
+            _ = Task.Run(() => Discord.Send(player, message, "Message"));
+        }
+
+        if (ChatManager._config != null && ChatManager._config.Tags.Any())
+        {
             
             foreach (var tag in ChatManager._config.Tags)
             {
@@ -77,12 +83,6 @@ public class OnPlayerChat
                         .Replace("{PLAYER_TEAM}", playerTeam);
                     
                     Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                    if (ChatManager._config.GeneralSettings.LoggingMessages)
-                    {
-                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                    }
-
                     return HookResult.Handled;
 
                 }
@@ -105,12 +105,6 @@ public class OnPlayerChat
                             .Replace("{PLAYER_TEAM}", playerTeam);
                     
                         Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                        if (ChatManager._config.GeneralSettings.LoggingMessages)
-                        {
-                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                        }
-
                         return HookResult.Handled;
                         
                     }
@@ -135,12 +129,6 @@ public class OnPlayerChat
                             .Replace("{PLAYER_TEAM}", playerTeam);
                     
                         Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                        if (ChatManager._config.GeneralSettings.LoggingMessages)
-                        {
-                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                        }
-
                         return HookResult.Handled;
                         
                     }
@@ -159,18 +147,25 @@ public class OnPlayerChat
                         .Replace("{PLAYER_TEAM}", playerTeam);
                     
                     Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                    if (ChatManager._config.GeneralSettings.LoggingMessages)
-                    {
-                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                    }
-
                     return HookResult.Handled;
 
                 }
                 
             }
 
+        }
+        else
+        {
+                    
+            var replace = $"\u200e{ChatManager._config?.ChatSyntax.AllSyntax}"
+                .Replace("{STATUS_DEAD}", deadStatus)
+                .Replace("{PLAYER_NAME}", $"{playerName}")
+                .Replace("{PLAYER_MESSAGE}", message)
+                .Replace("{PLAYER_TEAM}", playerTeam);
+                    
+            Server.PrintToChatAll(Colors.Tags(replace));
+            return HookResult.Handled;
+            
         }
         
         return HookResult.Continue;
