@@ -25,7 +25,10 @@ public class OnPlayerTeamChat
         {
             if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
             {
-                _ = Task.Run(() => Discord.Send(player, message, "Command"));
+                Task.Run(() =>
+                {
+                    Server.NextFrame(() => Discord.Send(player, message, "Command"));
+                });  
             }
             return HookResult.Continue;
         }
@@ -62,7 +65,12 @@ public class OnPlayerTeamChat
         
         if (ChatManager._config.GeneralSettings.LoggingMessages)
         {
-            _ = Task.Run(() => Discord.Send(player, message, "Message"));
+                
+            Task.Run(() =>
+            {
+                Server.NextFrame(() => Discord.Send(player, message, "Message"));
+            });  
+            
         }
 
         if (ChatManager._config != null && ChatManager._config.Tags.Any())
@@ -83,11 +91,6 @@ public class OnPlayerTeamChat
                         .Replace("{PLAYER_TEAM}", playerTeam);
                     
                     Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                    if (ChatManager._config.GeneralSettings.LoggingMessages)
-                    {
-                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                    }
 
                     return HookResult.Handled;
 
@@ -111,11 +114,6 @@ public class OnPlayerTeamChat
                             .Replace("{PLAYER_TEAM}", playerTeam);
                     
                         Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                        if (ChatManager._config.GeneralSettings.LoggingMessages)
-                        {
-                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                        }
 
                         return HookResult.Handled;
                         
@@ -141,11 +139,6 @@ public class OnPlayerTeamChat
                             .Replace("{PLAYER_TEAM}", playerTeam);
                     
                         Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                        if (ChatManager._config.GeneralSettings.LoggingMessages)
-                        {
-                            _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                        }
 
                         return HookResult.Handled;
                         
@@ -165,11 +158,6 @@ public class OnPlayerTeamChat
                         .Replace("{PLAYER_TEAM}", playerTeam);
                     
                     Server.PrintToChatAll(Colors.Tags(replace));
-                    
-                    if (ChatManager._config.GeneralSettings.LoggingMessages)
-                    {
-                        _ = Task.Run(() => Discord.Send(player, message, "Message"));
-                    }
 
                     return HookResult.Handled;
 

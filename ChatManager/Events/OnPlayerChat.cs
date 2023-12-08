@@ -25,7 +25,10 @@ public class OnPlayerChat
         {
             if ((bool)ChatManager._config?.GeneralSettings.LoggingCommands)
             {
-                _ = Task.Run(() => Discord.Send(player, message, "Command"));
+                Task.Run(() =>
+                {
+                    Server.NextFrame(() => Discord.Send(player, message, "Command"));
+                });  
             }
             return HookResult.Continue;
         }
@@ -62,7 +65,10 @@ public class OnPlayerChat
         
         if (ChatManager._config != null && ChatManager._config.GeneralSettings.LoggingMessages)
         {
-            _ = Task.Run(() => Discord.Send(player, message, "Message"));
+            Task.Run(() =>
+            {
+                Server.NextFrame(() => Discord.Send(player, message, "Message"));
+            });  
         }
 
         if (ChatManager._config != null && ChatManager._config.Tags.Any())
