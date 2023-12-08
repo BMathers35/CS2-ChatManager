@@ -1,7 +1,7 @@
 # CS2-ChatManager
 This CSSharp plugin allows managing CS2 chat messages.
 
-### Description
+## Description
 It was originally released as an enhanced version of the [CS2-Tags](https://github.com/daffyyyy/CS2-Tags) plugin, but now it has been completely revamped and improvements are being made to fulfill its sole purpose of managing server chat.
 
 With this plugin you can edit the syntax in your server chat, define tags for players, block ads and more.
@@ -47,17 +47,8 @@ Players with a chat ban cannot send messages to the chat. They can only use comm
   Other Settings ... 
 ```
 
-### Sample Forbidden Word Creation
-```json
-  ... Other Settings
-  "BannedWords": [
-    "banned",
-    "words"
-  ],
-  Other Settings ... 
-```
-
-### Roadmap
+## Roadmap
+- [ ] Chat commands (rtv, bet etc.)
 - [x] Filter bad words and ads in chat messages
 - [x] Filtering player names with predefined words
 - [x] Editing syntax in a chat
