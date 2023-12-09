@@ -7,7 +7,7 @@ It was originally released as an enhanced version of the [CS2-Tags](https://gith
 With this plugin you can edit the syntax in your server chat, define tags for players, block ads and more.
 
 ## Requirments
-[CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) **v88 >=**
+[CounterStrikeSharp](https://github.com/roflmuffin/CounterStrikeSharp/) **v115 >=**
 
 ## Features
 - **Custom Chat Tags**

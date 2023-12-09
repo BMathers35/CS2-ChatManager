@@ -5,13 +5,13 @@ using Helpers = ChatManager.Utils.Helpers;
 
 namespace ChatManager;
 
-[MinimumApiVersion(88)]
+[MinimumApiVersion(115)]
 public sealed class ChatManager : BasePlugin, IPluginConfig<Config>
 {
 
     public override string ModuleName => "ChatManager";
     public override string ModuleAuthor => "BMathers";
-    public override string ModuleVersion => "1.1.2";
+    public override string ModuleVersion => "1.1.5";
     public static List<MutedPlayer>? MutedPlayers { get; private set; }
     private int ModuleConfigVersion => 2;
     public required Config Config { get; set; }
