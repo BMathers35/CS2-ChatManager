@@ -1,6 +1,9 @@
 # CS2-ChatManager
 This CSSharp plugin allows managing CS2 chat messages.
 
+> [!NOTE]
+> I don't have time to update the plugin due to my own busy schedule, so feel free to send a pr if you want to contribute. I will update the plugin as soon as I am available.
+
 ## Description
 It was originally released as an enhanced version of the [CS2-Tags](https://github.com/daffyyyy/CS2-Tags) plugin, but now it has been completely revamped and improvements are being made to fulfill its sole purpose of managing server chat.
 
@@ -48,9 +51,14 @@ Players with a chat ban cannot send messages to the chat. They can only use comm
 ```
 
 ## Roadmap
+- [ ] MYSql support for log and other operations
 - [ ] Chat commands (rtv, bet etc.)
-- [x] Filter bad words and ads in chat messages
-- [x] Filtering player names with predefined words
-- [x] Editing syntax in a chat
-- [x] General code regulations
-- [x] Migration to Config Manager
+- [ ] Mute commands will be removed as other plugins do this better.
+- [ ] A bug that made messages sent to the team visible to everyone will be fixed.
+- [ ] The plugin will be made compatible with the latest CSSharp release.
+
+
+**The features in the list below are already provided by different plugins, but perhaps it makes more sense to combine them into a single plugin. For this reason I am undecided whether to add them or not.**
+- [ ] (maybe) A simple web panel to list saved chat messages
+- [ ] (maybe) Create simple chat commands with predefined responses
+- [ ] (maybe) Chat announcements running with MYSql
