@@ -1,38 +1,30 @@
 ﻿using System.Text.Json.Serialization;
 using CounterStrikeSharp.API.Core;
-using CounterStrikeSharp.API.Modules.Memory;
 
 namespace ChatManager;
 
-public class Messages
+public class AdBlock
 {
 
-    [JsonPropertyName("AlreadyMuted")]
-    public string AlreadyMuted { get; set; } = "{PLAYERNAME} has already been silenced.";
+    [JsonPropertyName("PlayerNames")] 
+    public bool PlayerNames { get; set; } = true;
 
-    [JsonPropertyName("SilencedForSeconds")]
-    public string SilencedForSeconds { get; set; } = "{PLAYERNAME} was silenced for {DURATION} second.";
+    [JsonPropertyName("ChatMessages")] 
+    public bool ChatMessages { get; set; } = true;
 
-    [JsonPropertyName("MultipleTargetsFound")]
-    public string MultipleTargetsFound { get; set; } = "Multiple targets found, please provide SteamID64 or the full name of the player.";
+}
 
-    [JsonPropertyName("NoTarget")]
-    public string NoTarget { get; set; } = "No target player found";
-
-    [JsonPropertyName("UnmutePlayer")]
-    public string UnmutePlayer { get; set; } = "Removed the silencing of the player {PLAYERNAME}";
-
-    [JsonPropertyName("UnmutePlayerInfo")]
-    public string UnmutePlayerInfo { get; set; } = "{ADMIN} has lifted your mute.";
-
-    [JsonPropertyName("CouldNotRemove")]
-    public string CouldNotRemove { get; set; } = "{PLAYERNAME} player's chat ban could not be removed!";
-
-    [JsonPropertyName("NotBanned")]
-    public string NotBanned { get; set; } = "{PLAYERNAME}'s ban has ended or has never been silenced.";
-
-    [JsonPropertyName("CanNotSendMessage")]
-    public string CanNotSendMessage { get; set; } = "You cannot send messages because you are silenced.";
+public class Logging
+{
+    
+    [JsonPropertyName("ServerLogs")]
+    public bool ServerLogs { get; set; } = false;
+    
+    [JsonPropertyName("DiscordLogs")]
+    public bool DiscordLogs { get; set; } = false;
+    
+    [JsonPropertyName("DiscordWebhook")]
+    public string DiscordWebhook { get; set; } = string.Empty;
     
 }
 
@@ -56,6 +48,26 @@ public class TeamTags
     
 }
 
+public class DatabaseSettings
+{
+    
+    [JsonPropertyName("host")]
+    public string Host { get; set; } = string.Empty;
+    
+    [JsonPropertyName("port")]
+    public int Port { get; set; } = 3306;
+    
+    [JsonPropertyName("username")]
+    public string Username { get; set; } = string.Empty;
+    
+    [JsonPropertyName("database")]
+    public string Database { get; set; } = string.Empty;
+    
+    [JsonPropertyName("password")]
+    public string Password { get; set; } = string.Empty;
+    
+}
+
 public class ChatSyntax
 {
     
@@ -70,71 +82,59 @@ public class ChatSyntax
     
 }
 
-public class GeneralSettings
+public class CmCommands
 {
     
-    [JsonPropertyName("Prefix")]
-    public string Prefix { get; set; } = "{Purple}[ChatManager]";
-    
-    [JsonPropertyName("AdBlockingOnChatAndPlayerNames")]
-    public bool AdBlockingOnChatAndPlayerNames { get; set; } = true;
-    
-    [JsonPropertyName("BlockBannedWordsInChat")]
-    public bool BlockBannedWordsInChat { get; set; } = false;
-    
-    [JsonPropertyName("DebugDiscordWebhook")]
-    public bool DebugDiscordWebhook { get; set; } = false;
-    
-    [JsonPropertyName("LoggingChatMessagesWithDiscord")]
-    public bool LoggingMessages { get; set; } = false;
-    
-    [JsonPropertyName("LoggingCommandsWithDiscord")]
-    public bool LoggingCommands { get; set; } = false;
-    
-    [JsonPropertyName("MuteCommand")]
-    public string MuteCommand { get; set; } = "mute";
-    
-    [JsonPropertyName("UnmuteCommand")]
-    public string UnmuteCommand { get; set; } = "unmute";
-    
-}
-
-public class DiscordWebhooks
-{
-    
-    [JsonPropertyName("MessagesWebhook")]
-    public string MessagesWebhook { get; set; } = "-";
-    
-    [JsonPropertyName("CommandsWebhook")]
-    public string CommandsWebhook { get; set; } = "-";
+    [JsonPropertyName("AdsReload")]
+    public string AdsReload { get; set; } = "adsreload";
     
 }
 
 public class Config : IBasePluginConfig
 {
     
-    [JsonPropertyName("General")]
-    public GeneralSettings GeneralSettings { get; set; } = new GeneralSettings();
+    [JsonPropertyName("Prefix")]
+    public string Prefix { get; set; } = "{Blue}[ChatManager]";
     
-    [JsonPropertyName("Tags")]
-    public Dictionary<string, string> Tags { get; set; } = new Dictionary<string, string>();
+    [JsonPropertyName("Commands")]
+    public CmCommands Commands { get; set; } = new CmCommands();
+
+    [JsonPropertyName("Database")] 
+    public DatabaseSettings Database { get; set; } = new DatabaseSettings();
+
+    [JsonPropertyName("AdBlock")] 
+    public AdBlock AdBlock { get; set; } = new AdBlock();
+
+    [JsonPropertyName("Logging")] 
+    public Logging Logging { get; set; } = new Logging();
     
     [JsonPropertyName("TeamTags")]
     public TeamTags TeamTags { get; set; } = new TeamTags();
     
-    [JsonPropertyName("ChatSyntax")]
-    public ChatSyntax ChatSyntax { get; set; } = new ChatSyntax();
-    
-    [JsonPropertyName("DiscordWebhooks")]
-    public DiscordWebhooks DiscordWebhooks { get; set; } = new DiscordWebhooks();
-    
-    [JsonPropertyName("Messages")]
-    public Messages Messages { get; set; } = new Messages();
-    
     [JsonPropertyName("BannedWords")]
     public List<string> BannedWords { get; set; } = new List<string>();
 
-    [JsonPropertyName("ConfigVersion")] 
-    public int Version { get; set; } = 2;
+    [JsonPropertyName("Tags")]
+    public Dictionary<string, Tag> Tags { get; set; } = new Dictionary<string, Tag>
+    {
+        ["Everyone"] = new()
+        {
+            ChatColor = "{White}",
+            ChatTag = "{White}[Player]",
+            NameColor = "{TeamColor}"
+        }
+    };
 
+    [JsonPropertyName("ConfigVersion")] 
+    public int Version { get; set; } = 3;
+
+}
+
+public class Tag
+{
+    
+    public string ChatTag { get; set; } = string.Empty;
+    public string ChatColor { get; set; } = string.Empty;
+    public string NameColor { get; set; } = string.Empty;
+    
 }

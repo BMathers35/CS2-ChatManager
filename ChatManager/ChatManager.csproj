@@ -1,15 +1,18 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <TargetFramework>net7.0</TargetFramework>
+        <TargetFramework>net8.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
     </PropertyGroup>
 
     <ItemGroup>
-      <PackageReference Include="CounterStrikeSharp.API" Version="1.0.115" />
-      <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
+        <None Update="lang\**\*.*" CopyToOutputDirectory="PreserveNewest" />
+        <PackageReference Include="CounterStrikeSharp.API" Version="1.0.247" />
+        <PackageReference Include="Dapper" Version="2.1.35" />
+        <PackageReference Include="MySqlConnector" Version="2.3.7" />
+        <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     </ItemGroup>
 
 </Project>

@@ -1,81 +1,53 @@
 ﻿using System.Text;
 using CounterStrikeSharp.API.Core;
+using Microsoft.Extensions.Logging;
 
 namespace ChatManager.Utils;
 
-public class Discord
+public static class Discord
 {
     
-    public static void Send(CCSPlayerController? player, string message, string type)
+    public static async Task SendAsync(CCSPlayerController? player, string message)
     {
-        string webhookUrl;
 
-            switch (type)
-            {
-                case "Message":
-                    webhookUrl = ChatManager._config?.DiscordWebhooks.MessagesWebhook ?? "";
-                    break;
-                case "Command":
-                    webhookUrl = ChatManager._config?.DiscordWebhooks.CommandsWebhook ?? "";
-                    break;
-                default:
-                    webhookUrl = "";
-                    break;
-            }
+        string webhookUrl = ChatManager.Instance.Config.Logging.DiscordWebhook;
+        if (string.IsNullOrEmpty(webhookUrl)) return;
+
+        try
+        {
             
-            Console.WriteLine($"Webhook URL: {webhookUrl}");
+            using var httpClient = new HttpClient();
+            string formattedDateTime = DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss");
 
-            if (!string.IsNullOrEmpty(webhookUrl))
+            var payload = new
             {
+                content = "",
+                tts = false,
+                embeds = new[]
+                {
+                    new
+                    {
+                        type = "rich",
+                        title = player?.PlayerName,
+                        description = $"```\n[{formattedDateTime}] {message}\n```",
+                        color = 0xff0000,
+                        url = $"https://steamcommunity.com/profiles/{player?.SteamID}"
+                    }
+                }
+            };
 
-                try
-                {
-                    
-                    var httpClient = new HttpClient();
-                    DateTime now = DateTime.Now;
-                    string formattedDateTime = now.ToString("dd-MM-yyyy HH:mm:ss");
-                    
-                    var payload = new
-                    {
-                        username = "ChatManager",
-                        content = "",
-                        tts = false,
-                        embeds = new[]
-                        {
-                            new
-                            {
-                                type = "rich",
-                                title = $"{player.PlayerName}",
-                                description = $"```\n[{formattedDateTime}] {message.ToString()}\n```",
-                                color = 0xff0000,
-                                url = $"https://steamcommunity.com/profiles/{player?.SteamID}"
-                            }
-                        }
-                    };
-                    
-                    Task.Run(async () =>
-                    {
-                        
-                        var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
-                        HttpResponseMessage response = await httpClient.PostAsync(webhookUrl, content);
-                        response.EnsureSuccessStatusCode();
-                        string result = await response.Content.ReadAsStringAsync();
-                        
-                        if (ChatManager._config != null && ChatManager._config.GeneralSettings.DebugDiscordWebhook)
-                        {
-                            Console.WriteLine($"[ChatManager] Result of HTTP Request: {result}");
-                        }
-                        
-                    });
-                    
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine($"[ChatManager] Discord Webhook Error: {e.Message}");
-                    throw;
-                }
+            var content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(payload), Encoding.UTF8, "application/json");
+            HttpResponseMessage response = await httpClient.PostAsync(webhookUrl, content);
+            response.EnsureSuccessStatusCode();
             
-            }
+        }
+        catch (Exception e)
+        {
+            
+            ChatManager.Instance.Logger.LogError($"Discord Webhook Error: {e.Message}");
+            throw;
+            
+        }
         
     }
     
